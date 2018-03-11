@@ -136,7 +136,21 @@ default_free_pages(struct Page *base, size_t n) {
         }
     }
     nr_free += n;
-    list_add(&free_list, &(base->page_link));
+    //list_add(&free_list, &(base->page_link));
+
+    bool	flag = 1;
+    le = list_next(&free_list);
+    while (le != &free_list) {
+        p = le2page(le, page_link);
+	if (base < p)
+	{
+		list_add_before(le, &(base->page_link));
+		flag = 0;
+		break;
+	}
+        le = list_next(le);
+    }
+    if (flag) list_add_before(&free_list, &(base->page_link));
 }
 
 static size_t
